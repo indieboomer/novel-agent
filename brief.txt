@@ -1,0 +1,172 @@
+Novel brief:
+
+1. META
+Title (working): Zosia i Miasto Szeptów
+Language: Polski (Polish)
+Genre: Literatura współczesna z elementami realizmu magicznego
+Subgenre: Miejska powieść inicjacyjna / subtelny thriller psychologiczny
+Target Audience: Young Adult / dorośli (18–40)
+Tone: Atmosferyczny, refleksyjny, momentami niepokojący
+Narrative POV: 3rd person limited (blisko Zosi)
+Tense: Czas przeszły
+Estimated Total Length: 400–500 stron (~130–150 tys. słów)
+Words per Page Target: 280–320
+
+2. CORE CONCEPT
+Logline
+Młoda kobieta zaczyna słyszeć szepty miasta  (Otwocka) – głosy przeszłości ukryte w murach, klatkach schodowych i opuszczonych miejscach – i odkrywa, że nie są one halucynacją, lecz częścią większej, ukrytej struktury pamięci, która zaczyna się rozpadać.
+
+High-Level Premise
+Zosia, dwudziestolatka po rozstaniu z chłopakiem - kiluletnią nastoletnią miłością i w życiowym zawieszeniu, wraca do rodzinnego miasta. Wkrótce zaczyna słyszeć ciche szepty – fragmenty rozmów, wspomnień, niewypowiedziane słowa. Z czasem odkrywa, że miasto „pamięta” swoich mieszkańców, a ona potrafi tę pamięć odczytywać.
+Im głębiej wchodzi w tę zdolność, tym bardziej zaciera się granica między tym, co realne, a tym, co zapisane w tkance miasta. Zosia musi zdecydować: czy wykorzysta dar, czy spróbuje go zniszczyć, zanim ją pochłonie.
+
+Central Themes
+Pamięć i zapominanie
+Samotność w mieście
+Tożsamość a miejsce
+Niewidzialne historie zwykłych ludzi
+
+Philosophical Question
+Czy miejsce może posiadać świadomość – a jeśli tak, czy człowiek ma prawo ingerować w jego pamięć?
+
+3. STORY SPINE (NON-NEGOTIABLE EVENTS)
+Zosia wraca do Otwocka po osobistym kryzysie.
+Po raz pierwszy słyszy wyraźny „szept” w opuszczonej kamienicy.
+Odkrywa, że szepty są powiązane z realnymi wydarzeniami z przeszłości.
+Spotyka osobę (archiwistę / urbanistę / dziennikarza), która również bada historię miasta.
+Odkrycie miejsca będącego „rdzeniem” Miasta Szeptów (np. stara stacja, tunel, fundamenty).
+Kryzys – szepty stają się agresywne / przytłaczające.
+
+Finał: Zosia dokonuje wyboru – zachować pamięć miasta czy ją wyciszyć.
+
+Forbidden Outcomes:
+Wyjaśnienie wszystkiego w sposób całkowicie racjonalny.
+Zamiana historii w czyste fantasy z „systemem magii”.
+
+4. STRUCTURE MODEL
+
+☑ Three Act Structure
+
+Act I
+
+Setup: Powrót do miasta, opis prawdziwego Otwocka i jego historii, poczucie wyobcowania.
+
+Inciting Incident: Pierwszy wyraźny szept z imieniem Zosi.
+
+First Turning Point: Zosia odkrywa, że szepty odnoszą się do realnych, sprawdzalnych faktów.
+
+Act II
+
+Escalation: Coraz silniejsze doświadczenia, badanie historii miasta.
+
+Midpoint: Odkrycie, że jej rodzina ma związek z „Miastem Szeptów”.
+
+Crisis: Szepty zaczynają przejmować kontrolę nad jej percepcją.
+
+Act III
+
+Climax: Konfrontacja w „rdzeniu” miasta.
+
+Resolution: Wybór – ograniczyć dar czy stać się jego strażniczką.
+
+Final Image: Miasto o świcie, cisza – ale nie całkowita.
+
+5. CHAPTER SCHEMA
+
+Total Chapters: 24–28
+Pages per Chapter: 15–20
+
+Chapter 1 – Powrót
+
+Purpose: Ustanowienie tonu i alienacji
+Emotional Shift: Obojętność → niepokój
+Required Beats:
+
+ Powrót do starego mieszkania
+
+ Pierwsze wrażenia miasta
+
+ Subtelny, niemal niesłyszalny szept
+ 
+Ending Requirement: Niewyjaśnione zdanie wypowiedziane przez „miasto”
+
+(Analogicznie kolejne rozdziały rozwijają spiralnie wątek szeptów i przeszłości)
+
+6. CHARACTER DOSSIERS
+Protagonist
+
+Name: Zofia „Zosia” Barska
+Age: 21
+External Goal: Odnaleźć sens i stabilność po życiowym kryzysie
+Internal Conflict: Ucieczka vs konfrontacja z przeszłością
+Backstory: Wychowana w mieście, wyjechała na studia, zerwała kontakt z rodziną po konflikcie
+Character Arc:
+Zamknięta i wycofana → świadoma swojej roli i odpowiedzialności
+
+Voice Notes:
+Ironia podszyta melancholią
+Uważna obserwatorka
+Dialogi oszczędne, realistyczne
+
+Antagonist (nieosobowy)
+Forma: Miasto jako byt zbiorowy
+Cel: Zachować pamięć
+Dlaczego „ma rację”: Bez pamięci ludzie powtarzają błędy
+Relacja z Zosią: Potrzebuje jej jako medium
+
+Supporting Character
+Name: Marek
+Function: Lokalny dziennikarz badający historię miasta
+Secret: Sam słyszał szepty w dzieciństwie
+
+7. WORLD BIBLE
+
+Setting: Współczesne polskie miasto (średniej wielkości, z historią powojenną)
+World Rules:
+Szepty są fragmentaryczne
+Nie da się ich nagrać
+Są powiązane z konkretnymi miejscami
+
+Hard Constraints:
+Brak widowiskowej magii
+Realizm codzienności musi dominować
+
+8. STYLE & PROSE GUIDELINES
+
+Desired Style:
+Klimatyczne opisy przestrzeni
+Sensoryczne detale (zapach kurzu, echo klatki schodowej)
+Dialogi naturalne
+
+Avoid:
+Długie monologi wewnętrzne
+Ekspozycję wprost
+
+Dialogue Density Target: 40%
+
+9. PACING RULES
+Każdy rozdział musi zawierać nowy element tajemnicy
+Co 3–4 rozdziały znaczące odkrycie
+Finał aktu II w wyraźnym napięciu
+
+10. CONTINUITY MANAGEMENT
+Agent musi utrzymywać:
+Rolling Summary (max 800 tokenów)
+Facts Ledger (daty, miejsca, relacje rodzinne)
+Open Threads (nierozwiązane historie mieszkańców)
+Emotional State Tracker (Zosia)
+
+11. CRITIQUE RUBRIC
+Każda strona oceniana pod kątem:
+Atmosfery
+Spójności realizmu
+Autentyczności dialogu
+Napięcia
+Nadmiernej dosłowności
+
+12. GENERATION LOOP PARAMETERS
+
+Plan Step: ☑ Yes
+Critique Depth: ☑ Medium–Brutal
+Rewrite Iterations per Page: 1
+Checkpoint: Po każdej stronie
