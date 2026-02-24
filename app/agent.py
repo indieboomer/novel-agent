@@ -88,6 +88,23 @@ def _threads_summary(threads: list, max_items: int = 10) -> str:
     return "\n".join(f"- {t}" for t in threads[:max_items])
 
 
+def _to_str_list(raw: Any) -> list[str]:
+    """Normalize a JSON list that may contain strings OR dicts with a text field."""
+    if not isinstance(raw, list):
+        return []
+    result = []
+    for item in raw:
+        if isinstance(item, str):
+            result.append(item)
+        elif isinstance(item, dict):
+            # Pick the first string value found (handles {"beat": "..."}, {"text": "..."}, etc.)
+            for v in item.values():
+                if isinstance(v, str):
+                    result.append(v)
+                    break
+    return result
+
+
 def _last_sentences(text: str, n: int = 3) -> str:
     """Return the last n sentences of a text."""
     sentences = [s.strip() for s in re.split(r'(?<=[.!?…])\s+', text) if s.strip()]
@@ -164,6 +181,9 @@ class NovelAgent:
         chapters = []
         for ch in raw:
             try:
+                # Normalize beats in case the model returned list-of-dicts
+                if "beats" in ch:
+                    ch["beats"] = _to_str_list(ch["beats"])
                 chapters.append(ChapterDef(**ch))
             except (ValidationError, KeyError) as e:
                 await self.log(f"Błąd w rozdziale {ch.get('num', '?')}: {e}", level="warning")
@@ -232,10 +252,10 @@ class NovelAgent:
         return PagePlan(
             scene_goal=raw.get("scene_goal", ""),
             location=raw.get("location", ""),
-            characters=raw.get("characters", ["Zosia"]),
-            beats=raw.get("beats", []),
-            continuity_risks=raw.get("continuity_risks", []),
-            foreshadow=raw.get("foreshadow", []),
+            characters=_to_str_list(raw.get("characters", ["Zosia"])) or ["Zosia"],
+            beats=_to_str_list(raw.get("beats", [])),
+            continuity_risks=_to_str_list(raw.get("continuity_risks", [])),
+            foreshadow=_to_str_list(raw.get("foreshadow", [])),
         )
 
     # ── Step: Draft ───────────────────────────────────────────────────────────

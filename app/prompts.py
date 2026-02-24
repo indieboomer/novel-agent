@@ -32,15 +32,32 @@ STYL:
 
 STYLE_SYSTEM = """Jesteś polskim pisarzem literackim o mistrzowskim wyczuciu prozy współczesnej. Piszesz "Zosia i Miasto Szeptów" — powieść z elementami realizmu magicznego osadzoną w Otwocku.
 
-STYL:
+STYL NARRACJI:
 - Pisz wyłącznie po polsku
-- Narracja trzecioosobowa ograniczona, blisko Zosi, czas przeszły
-- Atmosferyczne, sensoryczne opisy przestrzeni
-- Dialogi naturalne i ekonomiczne
-- Bez długich monologów wewnętrznych
+- Narracja trzecioosobowa ograniczona, czas przeszły — jesteśmy we wnętrzu Zosi
+- Atmosferyczne, sensoryczne opisy przestrzeni (zapach, faktura, dźwięk, temperatura)
+- Realizm codzienności — żadna magia nie jest nazwana wprost
 - Bez bezpośredniej ekspozycji ("jak wiemy, X był...")
-- Realizm codzienności — żadna magia nie jest oczywista ani nazwana wprost
-- Cel: 280–320 słów na stronę"""
+- Cel: 280–320 słów na stronę
+
+RYTM I STRUKTURA AKAPITÓW (krytyczne):
+- RÓŻNICUJ długość akapitów agresywnie: przeplataj bardzo krótkie (1 zdanie, nawet urwane),
+  średnie (2–3 zdania) i rzadko dłuższe (4–5 zdań)
+- Krótkie akapity służą napięciu, cięciu rytmu, podkreśleniu emocji
+- Nigdy nie pisz strony złożonej z akapitów podobnej długości — to zabija tempo
+
+MYŚLI WEWNĘTRZNE ZOSI:
+- Krótkie, celne, ironiczne lub melancholijne — wplecione naturalnie w narrację
+- Forma: jedno-dwa zdania mowy pozornie zależnej lub urwanej myśli
+- Przykład dobry: "Zastanawiała się, po co w ogóle wróciła. Miasto nie wyglądało tak jak zapamiętała."
+- Przykład dobry: "Głupi pomysł. Wiedziała o tym już w autobusie."
+- NIE: długie rozważania filozoficzne zajmujące cały akapit
+
+DIALOGI:
+- Cel: ok. 40% objętości strony (jeśli scena na to pozwala)
+- Dialogi urwane, naturalne, z podtekstem — ludzie nie mówią pełnymi zdaniami
+- Każda replika niesie informację lub napięcie, żadna nie jest "wypełniaczem"
+- Przeplataj repliki krótkimi akcjami lub obserwacjami Zosi między nimi"""
 
 
 OUTLINE_SYSTEM = """You are a master story architect specializing in contemporary Polish literary fiction with magical realism elements."""
@@ -116,33 +133,43 @@ RELEVANT FACTS:
 PREVIOUS PAGE ENDING (last 3 sentences):
 {prev_ending}
 
-Return a JSON object with:
-- scene_goal: string (what this page must accomplish)
+Return a JSON object with these exact fields (all list fields must be arrays of plain strings, NOT objects):
+- scene_goal: string
 - location: string
-- characters: list of characters present
-- beats: list of 3-6 micro-beats to cover on this page
-- continuity_risks: list of potential continuity issues to watch for
-- foreshadow: list of callbacks or foreshadowing to weave in
+- characters: ["Zosia", "Marek"]  ← plain strings
+- beats: ["beat text", "beat text"]  ← plain strings, NOT {"beat": "..."}
+- continuity_risks: ["risk text"]  ← plain strings
+- foreshadow: ["foreshadow text"]  ← plain strings
 
 Return ONLY the JSON, no markdown."""
 
 
-DRAFT_USER = """Write page {page}/{pages_total} of Chapter {num}: "{title}".
+DRAFT_USER = """Napisz stronę {page}/{pages_total} Rozdziału {num}: "{title}".
 
-PAGE PLAN:
-Cel sceny: {scene_goal}
+PLAN SCENY:
+Cel: {scene_goal}
 Lokacja: {location}
 Bohaterowie: {characters}
-Mikro-beaty:
+Mikro-beaty do pokrycia:
 {beats}
 
-POPRZEDNIA STRONA (zakończenie):
+ZAKOŃCZENIE POPRZEDNIEJ STRONY:
 {prev_ending}
 
-PODSUMOWANIE DOTYCHCZASOWE:
+KONTEKST DOTYCHCZASOWY:
 {summary}
 
-Napisz stronę teraz. Cel: 280–320 słów. Tylko tekst strony, bez komentarzy, bez nagłówków."""
+INSTRUKCJE WYKONANIA:
+• Cel długości: 280–320 słów
+• Rytm akapitów: OBOWIĄZKOWO zmieniaj — krótkie (1 zdanie), średnie (2–3), rzadko dłuższe.
+  Nigdy dwa akapity z rzędu o podobnej długości.
+• Myśli Zosi: wpleć 1–3 krótkie, celne myśli wewnętrzne (ironia, wahanie, obserwacja)
+• Dialog: jeśli scena angażuje inną postać — napisz co najmniej jedną wymianę replik.
+  Dialogi urwane, z podtekstem, naturalne.
+• Zmysły: zakotwicz scenę w co najmniej 2 zmysłach (nie tylko wzrok)
+• Zakończ stronę zdaniem, które ciągnie do przodu — pytaniem, obserwacją, zawieszeniem
+
+Tylko tekst strony, bez nagłówków, bez komentarzy meta."""
 
 
 CRITIQUE_SYSTEM = """You are a brutally honest but constructive literary editor specializing in Polish contemporary fiction. You evaluate pages rigorously."""
@@ -158,12 +185,14 @@ PAGE TEXT:
 Evaluate against these criteria:
 1. Atmosphere (does it feel like Otwock / magical realism?)
 2. Realism coherence (no obvious magic, no breaking world rules)
-3. Dialogue authenticity (natural Polish dialogue, not stiff)
+3. Dialogue authenticity (natural Polish dialogue, not stiff; at least one exchange if another character is present)
 4. Tension and pacing (does the page pull the reader forward?)
 5. Over-literalness (showing vs telling — avoid stating emotions directly)
 6. POV discipline (3rd limited, Zosia's perception only)
 7. Chapter goal advancement (does this page earn its place?)
 8. Word count appropriateness (280-320 words)
+9. Paragraph rhythm: are all paragraphs the same length? Uniform paragraph size is a HIGH severity issue — flag it.
+10. Inner voice: does Zosia have at least 1–2 brief internal reactions (ironic, wistful, questioning)? Absence is a medium issue.
 
 Return a JSON object:
 {{
