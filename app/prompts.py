@@ -136,10 +136,10 @@ PREVIOUS PAGE ENDING (last 3 sentences):
 Return a JSON object with these exact fields (all list fields must be arrays of plain strings, NOT objects):
 - scene_goal: string
 - location: string
-- characters: ["Zosia", "Marek"]  ← plain strings
-- beats: ["beat text", "beat text"]  ← plain strings, NOT {"beat": "..."}
-- continuity_risks: ["risk text"]  ← plain strings
-- foreshadow: ["foreshadow text"]  ← plain strings
+- characters: ["Zosia", "Marek"]  — plain strings only
+- beats: ["beat text", "beat text"]  — plain strings only, NOT objects
+- continuity_risks: ["risk text"]  — plain strings only
+- foreshadow: ["foreshadow text"]  — plain strings only
 
 Return ONLY the JSON, no markdown."""
 
