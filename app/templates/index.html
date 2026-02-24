@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zosia i Miasto Szeptów — Generator Powieści</title>
+<style>
+  :root {
+    --bg: #0b0c10;
+    --bg2: #13141a;
+    --bg3: #1c1e27;
+    --border: #2a2d3a;
+    --text: #c9cde0;
+    --text-dim: #6b7180;
+    --amber: #d4a843;
+    --amber-dim: #7a5e1f;
+    --green: #4caf7d;
+    --red: #e05252;
+    --yellow: #d4a843;
+    --blue: #5b8ee6;
+    --purple: #a07cd4;
+    --font-mono: 'Courier New', Courier, monospace;
+    --font-body: Georgia, 'Times New Roman', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align: center;
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    letter-spacing: 0.12em;
+    color: var(--amber);
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  header p {
+    margin-top: 6px;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    font-family: var(--font-mono);
+  }
+
+  /* ── Status bar ── */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-dim);
+    flex-shrink: 0;
+  }
+  .status-dot.running { background: var(--green); animation: pulse 1.5s infinite; }
+  .status-dot.complete { background: var(--amber); }
+  .status-dot.error { background: var(--red); }
+  .status-dot.stopped { background: var(--yellow); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .status-label {
+    font-weight: bold;
+    color: var(--amber);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .status-step {
+    color: var(--blue);
+    flex: 1;
+  }
+
+  .status-time {
+    color: var(--text-dim);
+    margin-left: auto;
+  }
+
+  /* ── Stats row ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-size: 1.6rem;
+    color: var(--amber);
+    font-family: var(--font-mono);
+    font-weight: bold;
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+    font-family: var(--font-mono);
+  }
+
+  /* ── Progress bar ── */
+  .progress-section {
+    margin-bottom: 20px;
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+  }
+
+  .progress-title {
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .progress-pct {
+    color: var(--amber);
+    font-weight: bold;
+  }
+
+  .progress-track {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    height: 14px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--amber-dim), var(--amber));
+    transition: width 0.8s ease;
+    border-radius: 3px;
+    min-width: 2px;
+  }
+
+  /* ── Chapter progress ── */
+  .chapter-progress {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+
+  .chapter-progress .chapter-title {
+    color: var(--purple);
+  }
+
+  /* ── Main content columns ── */
+  .content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .panel-body {
+    padding: 14px;
+  }
+
+  /* ── Log feed ── */
+  .log-feed {
+    height: 340px;
+    overflow-y: auto;
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.7;
+  }
+
+  .log-feed::-webkit-scrollbar { width: 4px; }
+  .log-feed::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .log-entry {
+    display: flex;
+    gap: 8px;
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .log-ts { color: var(--text-dim); flex-shrink: 0; }
+  .log-badge {
+    flex-shrink: 0;
+    width: 60px;
+    text-align: center;
+    border-radius: 3px;
+    padding: 0 4px;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+  }
+  .log-badge.info    { color: var(--blue); border: 1px solid var(--blue); }
+  .log-badge.success { color: var(--green); border: 1px solid var(--green); }
+  .log-badge.warning { color: var(--yellow); border: 1px solid var(--yellow); }
+  .log-badge.error   { color: var(--red); border: 1px solid var(--red); }
+  .log-msg { color: var(--text); word-break: break-word; }
+
+  .log-loc {
+    color: var(--text-dim);
+    flex-shrink: 0;
+    font-size: 0.68rem;
+  }
+
+  /* ── Page preview ── */
+  .preview-text {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: var(--text);
+    height: 340px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    padding: 4px 0;
+  }
+
+  .preview-text::-webkit-scrollbar { width: 4px; }
+  .preview-text::-webkit-scrollbar-thumb { background: var(--border); }
+
+  .preview-meta {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--purple);
+    margin-bottom: 10px;
+  }
+
+  .preview-empty {
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 40px 0;
+  }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 10px 22px;
+    border: 1px solid;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    background: transparent;
+    transition: all 0.2s;
+  }
+
+  button:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  #btn-start {
+    color: var(--green);
+    border-color: var(--green);
+  }
+  #btn-start:hover:not(:disabled) {
+    background: rgba(76, 175, 125, 0.12);
+  }
+
+  #btn-stop {
+    color: var(--red);
+    border-color: var(--red);
+  }
+  #btn-stop:hover:not(:disabled) {
+    background: rgba(224, 82, 82, 0.12);
+  }
+
+  #btn-reset {
+    color: var(--text-dim);
+    border-color: var(--border);
+  }
+  #btn-reset:hover:not(:disabled) {
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+  }
+
+  #btn-download-md, #btn-download-txt {
+    color: var(--amber);
+    border-color: var(--amber-dim);
+  }
+  #btn-download-md:hover:not(:disabled),
+  #btn-download-txt:hover:not(:disabled) {
+    background: rgba(212, 168, 67, 0.12);
+  }
+
+  #btn-report {
+    color: var(--purple);
+    border-color: var(--purple);
+  }
+  #btn-report:hover:not(:disabled) {
+    background: rgba(160, 124, 212, 0.12);
+  }
+
+  .controls-divider {
+    width: 1px;
+    height: 30px;
+    background: var(--border);
+  }
+
+  /* ── Error box ── */
+  .error-box {
+    background: rgba(224, 82, 82, 0.1);
+    border: 1px solid var(--red);
+    border-radius: 6px;
+    padding: 12px 16px;
+    color: var(--red);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  /* ── Step indicators ── */
+  .step-indicator {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .step-pill {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    transition: all 0.3s;
+  }
+
+  .step-pill.active {
+    background: rgba(212, 168, 67, 0.15);
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  /* ── Outline panel ── */
+  .outline-list {
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+
+  .outline-chapter {
+    display: flex;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    color: var(--text-dim);
+  }
+
+  .outline-chapter.current {
+    color: var(--amber);
+    font-weight: bold;
+  }
+
+  .outline-chapter.done {
+    color: var(--green);
+  }
+
+  .outline-num { width: 28px; flex-shrink: 0; text-align: right; }
+  .outline-act { width: 40px; flex-shrink: 0; color: var(--purple); }
+  .outline-title { flex: 1; }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .content { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 500px) {
+    header h1 { font-size: 1.3rem; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Zosia i Miasto Szeptów</h1>
+  <p>Outline-to-Novel Generation Agent · Port 5002</p>
+</header>
+
+<!-- Error box -->
+<div class="error-box" id="error-box"></div>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <div class="status-dot" id="status-dot"></div>
+  <span class="status-label" id="status-label">Oczekiwanie</span>
+  <span class="status-step" id="status-step"></span>
+  <span class="status-time" id="status-time"></span>
+</div>
+
+<!-- Stats row -->
+<div class="stats">
+  <div class="stat-card">
+    <div class="stat-value" id="stat-chapter">—</div>
+    <div class="stat-label">Rozdział</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="stat-page">—</div>
+    <div class="stat-label">Strona w rozdziale</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="stat-pages-done">0</div>
+    <div class="stat-label">Stron łącznie</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" id="stat-words">0</div>
+    <div class="stat-label">Słów</div>
+  </div>
+</div>
+
+<!-- Progress bar -->
+<div class="progress-section">
+  <div class="progress-header">
+    <span class="progress-title">Postęp powieści</span>
+    <span class="progress-pct" id="progress-pct">0%</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+  </div>
+  <div class="chapter-progress">
+    Bieżący rozdział: <span class="chapter-title" id="chapter-title-display">—</span>
+  </div>
+</div>
+
+<!-- Step indicators -->
+<div class="step-indicator" id="step-indicators">
+  <span class="step-pill" data-step="generating_outline">Konspekt</span>
+  <span class="step-pill" data-step="chapter_contract">Kontrakt</span>
+  <span class="step-pill" data-step="page_plan">Plan strony</span>
+  <span class="step-pill" data-step="draft">Szkic</span>
+  <span class="step-pill" data-step="critique">Redakcja</span>
+  <span class="step-pill" data-step="rewrite">Przepisanie</span>
+  <span class="step-pill" data-step="memory_update">Pamięć</span>
+  <span class="step-pill" data-step="chapter_verify">Weryfikacja</span>
+</div>
+
+<br>
+
+<!-- Main content -->
+<div class="content">
+  <!-- Log feed -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>Dziennik aktywności</span>
+      <span id="log-count" style="color:var(--text-dim)">0 wpisów</span>
+    </div>
+    <div class="log-feed" id="log-feed"></div>
+  </div>
+
+  <!-- Page preview -->
+  <div class="panel">
+    <div class="panel-header">
+      <span>Ostatnia wygenerowana strona</span>
+      <span id="preview-loc" style="color:var(--purple)"></span>
+    </div>
+    <div class="panel-body">
+      <div id="preview-content">
+        <div class="preview-empty">Oczekiwanie na pierwszą stronę…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <button id="btn-start" onclick="startAgent()">▶ Uruchom</button>
+  <button id="btn-stop" onclick="stopAgent()" disabled>■ Zatrzymaj</button>
+  <button id="btn-reset" onclick="resetAgent()">↺ Reset</button>
+  <div class="controls-divider"></div>
+  <button id="btn-download-md" onclick="download('md')" disabled>⬇ Pobierz (.md)</button>
+  <button id="btn-download-txt" onclick="download('txt')" disabled>⬇ Pobierz (.txt)</button>
+  <button id="btn-report" onclick="downloadReport()" disabled>📋 Raport edytora</button>
+</div>
+
+<script>
+  let evtSource = null;
+  let lastLogCount = 0;
+  let logAutoScroll = true;
+  let currentState = {};
+
+  // ── SSE connection ─────────────────────────────────────────────────────────
+  function connectSSE() {
+    evtSource = new EventSource('/progress');
+    evtSource.addEventListener('update', (e) => {
+      try {
+        const data = JSON.parse(e.data);
+        updateUI(data.state, data.logs);
+      } catch (err) {
+        console.error('SSE parse error', err);
+      }
+    });
+    evtSource.onerror = () => {
+      setTimeout(connectSSE, 3000);
+      evtSource.close();
+    };
+  }
+
+  // ── UI update ──────────────────────────────────────────────────────────────
+  function updateUI(state, logs) {
+    currentState = state;
+
+    // Status dot + label
+    const dot = document.getElementById('status-dot');
+    const label = document.getElementById('status-label');
+    dot.className = 'status-dot';
+    if (state.is_running) dot.classList.add('running');
+    else if (state.status === 'complete') dot.classList.add('complete');
+    else if (state.status === 'error') dot.classList.add('error');
+    else if (state.status === 'stopped') dot.classList.add('stopped');
+
+    const statusMap = {
+      idle: 'Oczekiwanie', running: 'Generowanie', complete: 'Ukończono',
+      error: 'Błąd', stopped: 'Zatrzymano'
+    };
+    label.textContent = statusMap[state.status] || state.status;
+
+    document.getElementById('status-step').textContent =
+      state.is_running ? `· ${state.step_label || state.step}` : '';
+
+    document.getElementById('status-time').textContent =
+      state.updated ? new Date(state.updated).toLocaleTimeString('pl-PL') : '';
+
+    // Stats
+    document.getElementById('stat-chapter').textContent =
+      state.chapter ? `${state.chapter}/${state.total_chapters}` : '—';
+    document.getElementById('stat-page').textContent =
+      state.page ? state.page : '—';
+    document.getElementById('stat-pages-done').textContent =
+      (state.pages_done || 0).toLocaleString('pl-PL');
+    document.getElementById('stat-words').textContent =
+      (state.words || 0).toLocaleString('pl-PL');
+
+    // Progress
+    const pct = state.progress_pct || 0;
+    document.getElementById('progress-pct').textContent = pct.toFixed(1) + '%';
+    document.getElementById('progress-fill').style.width = Math.min(pct, 100) + '%';
+    document.getElementById('chapter-title-display').textContent =
+      state.chapter_title || '—';
+
+    // Step pills
+    document.querySelectorAll('.step-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.step === state.step);
+    });
+
+    // Error box
+    const errBox = document.getElementById('error-box');
+    if (state.error) {
+      errBox.textContent = '⚠ ' + state.error;
+      errBox.style.display = 'block';
+    } else {
+      errBox.style.display = 'none';
+    }
+
+    // Preview
+    if (state.preview) {
+      const c = document.getElementById('preview-content');
+      c.innerHTML = `
+        <div class="preview-meta">Rozdział ${state.chapter}: "${state.chapter_title}" — strona ${state.page}</div>
+        <div class="preview-text">${escapeHtml(state.preview)}${state.is_running ? '<span style="animation:pulse 1s infinite;display:inline-block">…</span>' : ''}</div>
+      `;
+    }
+
+    if (state.chapter_title) {
+      document.getElementById('preview-loc').textContent =
+        `Roz. ${state.chapter}, str. ${state.page}`;
+    }
+
+    // Buttons
+    const isRunning = state.is_running;
+    const isDone = state.status === 'complete';
+    document.getElementById('btn-start').disabled = isRunning || isDone;
+    document.getElementById('btn-stop').disabled = !isRunning;
+    document.getElementById('btn-reset').disabled = isRunning;
+    document.getElementById('btn-download-md').disabled = state.pages_done === 0;
+    document.getElementById('btn-download-txt').disabled = state.pages_done === 0;
+    document.getElementById('btn-report').disabled = state.pages_done === 0;
+
+    // Logs
+    if (logs && logs.length !== lastLogCount) {
+      renderLogs(logs);
+      lastLogCount = logs.length;
+    }
+  }
+
+  // ── Log rendering ──────────────────────────────────────────────────────────
+  function renderLogs(logs) {
+    const feed = document.getElementById('log-feed');
+    feed.innerHTML = '';
+    logs.slice().reverse().forEach(entry => {
+      const div = document.createElement('div');
+      div.className = 'log-entry';
+
+      const ts = entry.ts ? new Date(entry.ts).toLocaleTimeString('pl-PL') : '';
+      const loc = entry.chapter ? `R${entry.chapter}${entry.page ? '/S' + entry.page : ''}` : '';
+
+      div.innerHTML = `
+        <span class="log-ts">${ts}</span>
+        <span class="log-badge ${entry.level}">${entry.level}</span>
+        ${loc ? `<span class="log-loc">${loc}</span>` : ''}
+        <span class="log-msg">${escapeHtml(entry.msg)}</span>
+      `;
+      feed.appendChild(div);
+    });
+    document.getElementById('log-count').textContent = logs.length + ' wpisów';
+  }
+
+  // ── Actions ────────────────────────────────────────────────────────────────
+  async function startAgent() {
+    document.getElementById('btn-start').disabled = true;
+    try {
+      const r = await fetch('/api/start', { method: 'POST' });
+      const data = await r.json();
+      if (data.message) alert(data.message);
+    } catch (e) {
+      alert('Błąd połączenia: ' + e.message);
+    }
+  }
+
+  async function stopAgent() {
+    document.getElementById('btn-stop').disabled = true;
+    await fetch('/api/stop', { method: 'POST' });
+  }
+
+  async function resetAgent() {
+    if (!confirm('Czy na pewno chcesz zresetować postęp? Wszystkie wygenerowane pliki zostaną usunięte.')) return;
+    document.getElementById('btn-reset').disabled = true;
+    await fetch('/api/reset', { method: 'POST' });
+    location.reload();
+  }
+
+  function download(fmt) {
+    window.location.href = '/api/download?format=' + fmt;
+  }
+
+  function downloadReport() {
+    window.location.href = '/api/report';
+  }
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function escapeHtml(text) {
+    if (!text) return '';
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+  // Initial state fetch
+  fetch('/api/state')
+    .then(r => r.json())
+    .then(state => {
+      currentState = state;
+      fetch('/api/logs?n=50')
+        .then(r => r.json())
+        .then(logs => updateUI(state, logs));
+    });
+
+  connectSSE();
+</script>
+</body>
+</html>
