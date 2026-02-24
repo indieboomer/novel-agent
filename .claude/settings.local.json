@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git check-ignore -v .env output/)"
+      "Bash(git check-ignore -v .env output/)",
+      "Bash(docker compose build --no-cache novel-agent)"
     ]
   }
 }

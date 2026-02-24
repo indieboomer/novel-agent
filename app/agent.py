@@ -38,10 +38,37 @@ def _extract_json(text: str) -> str:
     """Strip markdown code fences if present."""
     text = text.strip()
     if text.startswith("```"):
-        # Remove first line (```json or ```) and trailing ```
         text = re.sub(r"^```[^\n]*\n", "", text)
         text = re.sub(r"```\s*$", "", text)
     return text.strip()
+
+
+def _parse_json_tolerant(text: str) -> Any:
+    """Parse JSON, attempting to repair truncated arrays/objects if needed."""
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        # Try to salvage a truncated JSON array by closing it
+        repaired = text.rstrip().rstrip(",")
+        if repaired.startswith("["):
+            # Close any open string, then close the last object and array
+            # Find the last complete '}'  and close there
+            last_close = repaired.rfind("}")
+            if last_close != -1:
+                repaired = repaired[: last_close + 1] + "]"
+                try:
+                    return json.loads(repaired)
+                except json.JSONDecodeError:
+                    pass
+        elif repaired.startswith("{"):
+            last_close = repaired.rfind("}")
+            if last_close != -1:
+                try:
+                    return json.loads(repaired[: last_close + 1])
+                except json.JSONDecodeError:
+                    pass
+        # Re-raise original error
+        raise
 
 
 def _now() -> str:
@@ -111,9 +138,15 @@ class NovelAgent:
                 else:
                     raise
 
-    async def _call_json(self, system: str, user: str, temperature: float = 0.3) -> Any:
-        raw = await self._call(system, user, temperature=temperature, max_tokens=2000)
-        return json.loads(_extract_json(raw))
+    async def _call_json(
+        self,
+        system: str,
+        user: str,
+        temperature: float = 0.3,
+        max_tokens: int = 2000,
+    ) -> Any:
+        raw = await self._call(system, user, temperature=temperature, max_tokens=max_tokens)
+        return _parse_json_tolerant(_extract_json(raw))
 
     # ── Step: Generate outline ────────────────────────────────────────────────
 
@@ -125,6 +158,7 @@ class NovelAgent:
             system=p.OUTLINE_SYSTEM,
             user=p.OUTLINE_USER.format(brief=brief_text),
             temperature=0.5,
+            max_tokens=8000,
         )
 
         chapters = []
