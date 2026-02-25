@@ -111,6 +111,23 @@ def _last_sentences(text: str, n: int = 3) -> str:
     return " ".join(sentences[-n:]) if sentences else text[-500:]
 
 
+def _fmt(template: str, **kwargs) -> str:
+    """Safe prompt template substitution.
+
+    Unlike str.format(), this is immune to curly braces inside substituted
+    values (e.g. JSON contract strings with {"beat": "..."}).
+    Works in a single regex pass so values are never re-scanned.
+    Handles {{...}} → {...} escaping for literal braces in prompts.
+    """
+    def _replacer(m: re.Match) -> str:
+        key = m.group(1)
+        return str(kwargs[key]) if key in kwargs else m.group(0)
+
+    result = re.sub(r"\{(\w+)\}", _replacer, template)
+    # Unescape double-braces that were used for literal { } in the prompt
+    return result.replace("{{", "{").replace("}}", "}")
+
+
 # ── OpenAI wrapper ────────────────────────────────────────────────────────────
 
 class NovelAgent:
@@ -173,7 +190,7 @@ class NovelAgent:
 
         raw = await self._call_json(
             system=p.OUTLINE_SYSTEM,
-            user=p.OUTLINE_USER.format(brief=brief_text),
+            user=_fmt(p.OUTLINE_USER, brief=brief_text),
             temperature=0.5,
             max_tokens=8000,
         )
@@ -206,7 +223,8 @@ class NovelAgent:
 
         return await self._call_json(
             system=p.CONTRACT_SYSTEM,
-            user=p.CONTRACT_USER.format(
+            user=_fmt(
+                p.CONTRACT_USER,
                 num=chapter.num,
                 title=chapter.title,
                 purpose=chapter.purpose,
@@ -236,7 +254,8 @@ class NovelAgent:
 
         raw = await self._call_json(
             system=p.PLAN_SYSTEM,
-            user=p.PLAN_USER.format(
+            user=_fmt(
+                p.PLAN_USER,
                 page=page_num,
                 pages_total=chapter.pages,
                 num=chapter.num,
@@ -272,7 +291,8 @@ class NovelAgent:
 
         return await self._call(
             system=p.STYLE_SYSTEM,
-            user=p.DRAFT_USER.format(
+            user=_fmt(
+                p.DRAFT_USER,
                 page=page_num,
                 pages_total=chapter.pages,
                 num=chapter.num,
@@ -302,7 +322,8 @@ class NovelAgent:
         try:
             raw = await self._call_json(
                 system=p.CRITIQUE_SYSTEM,
-                user=p.CRITIQUE_USER.format(
+                user=_fmt(
+                    p.CRITIQUE_USER,
                     num=chapter.num,
                     title=chapter.title,
                     page=page_num,
@@ -345,7 +366,8 @@ class NovelAgent:
 
         return await self._call(
             system=p.STYLE_SYSTEM,
-            user=p.REWRITE_USER.format(
+            user=_fmt(
+                p.REWRITE_USER,
                 draft=draft,
                 score=critique.overall_score,
                 issues=issues_text,
@@ -374,7 +396,8 @@ class NovelAgent:
         try:
             raw = await self._call_json(
                 system=p.MEMORY_SYSTEM,
-                user=p.MEMORY_USER.format(
+                user=_fmt(
+                    p.MEMORY_USER,
                     summary=memory.summary[:2000] or "Brak.",
                     facts=json.dumps(dict(list(memory.facts.items())[:30]), ensure_ascii=False),
                     threads="\n".join(memory.threads[:15]) or "Brak.",
@@ -420,7 +443,8 @@ class NovelAgent:
         try:
             compressed = await self._call(
                 system=p.MEMORY_SYSTEM,
-                user=p.COMPRESS_SUMMARY_USER.format(
+                user=_fmt(
+                    p.COMPRESS_SUMMARY_USER,
                     summary=memory.summary,
                     facts=json.dumps(dict(list(memory.facts.items())[:20]), ensure_ascii=False),
                 ),
@@ -449,7 +473,8 @@ class NovelAgent:
         try:
             return await self._call_json(
                 system=p.CONTRACT_SYSTEM,
-                user=p.CHAPTER_VERIFY_USER.format(
+                user=_fmt(
+                    p.CHAPTER_VERIFY_USER,
                     num=chapter.num,
                     title=chapter.title,
                     contract=json.dumps(contract, ensure_ascii=False, indent=2),
